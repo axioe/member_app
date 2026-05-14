@@ -2,7 +2,7 @@ package com.my.member_app.service;
 
 import com.my.member_app.dto.MemberDto;
 import com.my.member_app.entity.Member;
-import com.my.member_app.Repository.MemberRepository;
+import com.my.member_app.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,11 +31,26 @@ public class MemberService {
         List<Member> members = memberRepository.findAll();
         // Entity List -> Dto List로 변환한 후 리턴한다.
         // 깡통 DtoList 만들기
-        List<MemberDto> dtoList = new ArrayList<>();
-        for (Member member : members) {
-            dtoList.add(MemberDto.toDto(member));
-        }
-        return dtoList;
+//        List<MemberDto> dtoList = new ArrayList<>();
+        // 1. for each 로 수행
+//        for (Member member : members) {
+//            dtoList.add(MemberDto.toDto(member));
+//        }
+//        return dtoList;
+        // 2. 스트림을 이용해서 처리하기
+        return members
+                .stream()
+                .map(x -> MemberDto.toDto(x))
+                .toList();
     }
 
+    public void insert(MemberDto dto) {
+        // Dto -> Member 변환
+        Member member = MemberDto.toEntity(dto);
+        memberRepository.save(member);
+    }
+
+    public void delete(Long deleteId) {
+        memberRepository.deleteById(deleteId);
+    }
 }
